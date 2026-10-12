@@ -101,7 +101,6 @@ public sealed class PlayerLook
         }
         if (string.IsNullOrEmpty(target.KnifeType) || target.KnifeType == "weapon_knife") { target.KnifeType = baseL.KnifeType; target.KnifeTypeDef = baseL.KnifeTypeDef; }
         foreach (var (m, v) in baseL.KnifeByModel) target.KnifeByModel.TryAdd(m, v);
-        if (string.IsNullOrEmpty(target.KnifeType) || target.KnifeType == "weapon_knife") { }
         if (string.IsNullOrEmpty(target.KnifeBaseSkinId) && baseL.KnifeBasePaint > 0) { target.KnifeBasePaint = baseL.KnifeBasePaint; target.KnifeBaseSkinId = baseL.KnifeBaseSkinId; target.KnifeBaseLegacy = baseL.KnifeBaseLegacy; }
         if (target.Gloves.Paint <= 0 && baseL.Gloves.Paint > 0) { target.Gloves.Paint = baseL.Gloves.Paint; target.Gloves.SkinId = baseL.Gloves.SkinId; target.Gloves.Legacy = baseL.Gloves.Legacy; }
         if (string.IsNullOrEmpty(target.GloveModel) && !string.IsNullOrEmpty(baseL.GloveModel)) target.GloveModel = baseL.GloveModel;
@@ -130,7 +129,7 @@ public sealed class PlayerLook
             }
             ApplyItem(sl, type, target, value, cat);
         }
-        // 合并:T 侧 = any 基线 + t 覆盖;CT 侧 = any 基线 + ct 覆盖(整条目替换,不做字段混合)
+        // 合并:T 侧 = any 基线 + t 覆盖;CT 侧 = any 基线 + ct 覆盖(按字段合并:目标已设置的字段优先,未设置的才吃基线)
         MergeInto(look.T, look.Any);
         MergeInto(look.Ct, look.Any);
         // 两遍(any → 具体边)合并完成后:按各边当前佩戴型号解析刀皮肤

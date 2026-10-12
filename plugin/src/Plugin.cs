@@ -20,7 +20,7 @@ public sealed class HowlPlugin : BasePlugin, IPluginConfig<HowlConfig>
     public static HowlPlugin Current { get; private set; } = null!;
 
     public override string ModuleName => "Howl 换肤";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.1";
     public override string ModuleAuthor => "CS2Suite";
     public override string ModuleDescription => "CSGO-API 数据源换肤:全中文菜单、CT/T 分边、混搭皮肤、网页秒级生效、目录自动更新。";
 
@@ -72,6 +72,8 @@ public sealed class HowlPlugin : BasePlugin, IPluginConfig<HowlConfig>
         if (Config.AutoUpdate)
         {
             // 启动 90 秒后若从未成功同步过(状态文件缺失),自动补一次检查:写 meta 版本、对齐 Web 显示
+            // 注意:这两个定时器不能带 STOP_ON_MAPCHANGE —— 换图后定时器会被销毁且不会重建,
+            // 服务器只要换过一次图,"每 N 小时检查更新"就永久失效了。
             AddTimer(90f, () =>
             {
                 if (!_updater.HasState)
@@ -80,7 +82,7 @@ public sealed class HowlPlugin : BasePlugin, IPluginConfig<HowlConfig>
                         var r = await _updater.CheckAndApplyAsync(false);
                         Logger.LogInformation("[Howl] 启动补检:" + (r ?? "无变化"));
                     });
-            }, TimerFlags.STOP_ON_MAPCHANGE);
+            });
             var mins = Math.Max(10, Config.UpdateCheckMinutes);
             AddTimer(mins * 60f, () =>
             {
@@ -89,7 +91,7 @@ public sealed class HowlPlugin : BasePlugin, IPluginConfig<HowlConfig>
                     var r = await _updater.CheckAndApplyAsync(false);
                     if (r is not null && r != "已有更新任务在执行") Logger.LogInformation("[Howl] 自动更新:" + r);
                 });
-            }, TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
+            }, TimerFlags.REPEAT);
         }
 
         // 命令

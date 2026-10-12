@@ -29,7 +29,9 @@ public sealed class Engine
     private Dictionary<ulong, string> _fingerprints = new();
     private volatile bool _pollBusy;
     private volatile bool _baselineDone;
-    private double _lastApplyAt = -999;
+    // 重建冷却必须"按玩家"记账:轮询是一批玩家一起处理,用一个共享时间戳会导致
+    // 同批里的第二个及之后玩家被静默跳过 —— 而指纹此时已刷新,他们的改动将永不生效。
+    private readonly Dictionary<ulong, double> _lastRebuildAt = new();
     private const double ApplyCooldownSeconds = 2.5;
 
     public Engine(BasePlugin plugin, ILogger log, HowlConfig cfg, Store store, HowlInjector inj)
@@ -45,7 +47,12 @@ public sealed class Engine
         _plugin.RegisterEventHandler<EventPlayerActivate>((ev, info) => { ScheduleJoin(ev.Userid); return HookResult.Continue; }, HookMode.Post);
         _plugin.RegisterEventHandler<EventPlayerDisconnect>((ev, info) =>
         {
-            if (ev.Userid?.IsValid == true && ev.Userid.SteamID != 0) { lock (_cacheLock) _cache.Remove((ulong)ev.Userid.SteamID); }
+            if (ev.Userid?.IsValid == true && ev.Userid.SteamID != 0)
+            {
+                var sid = (ulong)ev.Userid.SteamID;
+                lock (_cacheLock) _cache.Remove(sid);
+                _lastRebuildAt.Remove(sid);
+            }
             return HookResult.Continue;
         }, HookMode.Post);
         if (_cfg.InstantApplySeconds > 0 && _inj.Available)
@@ -145,9 +152,12 @@ public sealed class Engine
         var steam = (ulong)player.SteamID;
         PlayerLook? look; lock (_cacheLock) _cache.TryGetValue(steam, out look);
         if (look is null) return;
-        var now = Server.CurrentTime;
-        if (rebuild && now - _lastApplyAt < ApplyCooldownSeconds && !quiet) return;
-        if (rebuild) _lastApplyAt = now;
+        if (rebuild)
+        {
+            var now = Server.CurrentTime;
+            if (_lastRebuildAt.TryGetValue(steam, out var last) && now - last < ApplyCooldownSeconds && !quiet) return;
+            _lastRebuildAt[steam] = now;
+        }
         try
         {
             var isCt = player.Team == CsTeam.CounterTerrorist;

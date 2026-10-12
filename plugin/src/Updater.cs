@@ -105,7 +105,9 @@ public sealed class HowlUpdater
                     await File.WriteAllBytesAsync(tmp, bytes);
                 }
 
-            // 安全阈值:对下载的 zh-CN/skins.json 与整体数量做下限检查
+            // 安全阈值校验 —— 必须在覆盖 data/ 之前完成:
+            // 早先的实现把整体阈值检查放在文件覆盖之后,一旦上游数据异常,
+            // "拒绝上线"只保住了内存里的旧目录,磁盘上的 data/ 已经被坏数据覆盖,重启即中招。
             var zhSkinsPath = Path.Combine(stage, "zh-CN", "skins.json");
             if (!File.Exists(zhSkinsPath)) return "缺少 zh-CN/skins.json,放弃更新";
             using (var doc = JsonDocument.Parse(await File.ReadAllTextAsync(zhSkinsPath)))
@@ -114,7 +116,14 @@ public sealed class HowlUpdater
                     return $"上游 skins.json 条目异常({(doc.RootElement.ValueKind == JsonValueKind.Array ? doc.RootElement.GetArrayLength() : -1)}),低于安全阈值,放弃";
             }
 
-            // 原子替换:逐文件 move(Windows/Linux 皆可,目标存在则先删)
+            // 用暂存目录预加载并做整体阈值校验(暂存目录结构与 data/ 一致)
+            var fresh = HowlCatalog.Load(stage, _log);
+            var guns = fresh.Weapons.Count(w => w.Skins.Count > 0);
+            var knifeSkins = fresh.Knives.Sum(k => k.Skins.Count);
+            if (guns < 20 || knifeSkins < 400 || fresh.Agents.Count < 40 || fresh.Music.Count < 50 || fresh.Stickers.Count < 3000)
+                return $"新目录数量异常(枪 {guns}/刀皮肤 {knifeSkins}/探员 {fresh.Agents.Count}/音乐 {fresh.Music.Count}/贴纸 {fresh.Stickers.Count}),保持线上数据不动";
+
+            // 校验通过,才逐文件覆盖 data/(Windows/Linux 皆可,目标存在则先删)
             foreach (var lang in Langs)
             {
                 var dir = Path.Combine(stage, lang);
@@ -128,13 +137,6 @@ public sealed class HowlUpdater
                     File.Move(f, to);
                 }
             }
-
-            // 重载目录并校验
-            var fresh = HowlCatalog.Load(_dataDir, _log);
-            var guns = fresh.Weapons.Count(w => w.Skins.Count > 0);
-            var knifeSkins = fresh.Knives.Sum(k => k.Skins.Count);
-            if (guns < 20 || knifeSkins < 400 || fresh.Agents.Count < 40 || fresh.Music.Count < 50 || fresh.Stickers.Count < 3000)
-                return $"新目录数量异常(枪 {guns}/刀皮肤 {knifeSkins}/探员 {fresh.Agents.Count}/音乐 {fresh.Music.Count}/贴纸 {fresh.Stickers.Count}),拒绝上线";
             // 后台线程只做纯 IO:存指纹、写 meta;UI/游戏 API 全部交给主线程 OnTick(见 HowlPlugin.SwapCatalog)
             File.WriteAllText(_stateFile, remote);
             var counts = JsonSerializer.Serialize(new
