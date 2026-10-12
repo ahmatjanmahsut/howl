@@ -1,0 +1,13 @@
+{
+  "name": "howl-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Howl 换肤 Web 端(Express + CSGO-API 数据 + 自动同步)",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0",
+    "bcryptjs": "^2.4.3"
+  }
+}

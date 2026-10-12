@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Howl</AssemblyName>
+    <RootNamespace>Howl</RootNamespace>
+    <NoWarn>CS1998;CS0618</NoWarn>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.376" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+    <PackageReference Include="CS2MenuManager" Version="1.0.43" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- gamedata 与示例配置随构建输出,便于打包 -->
+    <None Include="gamedata\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="config\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- 剔除 CSS 宿主自带的程序集,避免版本冲突(项目历史教训) -->
+  <Target Name="PruneHostProvidedAssemblies" AfterTargets="Build">
+    <ItemGroup>
+      <HostProvided Include="$(OutputPath)FastGenericNew.dll" />
+      <HostProvided Include="$(OutputPath)McMaster.NETCore.Plugins.dll" />
+      <HostProvided Include="$(OutputPath)Microsoft.DotNet.PlatformAbstractions.dll" />
+      <HostProvided Include="$(OutputPath)Microsoft.Extensions.*.dll" />
+      <HostProvided Include="$(OutputPath)Scrutor.dll" />
+      <HostProvided Include="$(OutputPath)Serilog*.dll" />
+      <HostProvided Include="$(OutputPath)System.Diagnostics.EventLog.dll" />
+    </ItemGroup>
+    <Delete Files="@(HostProvided)" ContinueOnError="true" />
+  </Target>
+</Project>

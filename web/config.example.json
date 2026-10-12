@@ -1,0 +1,21 @@
+{
+  "database": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "howl",
+    "password": "CHANGE_ME_DB_PASSWORD",
+    "database": "howl"
+  },
+  "howlDatabase": "howl",
+  "web": {
+    "port": 8090,
+    "sessionSecret": "CHANGE_ME_RANDOM_64_HEX",
+    "adminPassword": "CHANGE_ME_FIRST_ADMIN_PASSWORD",
+    "publicHost": ""
+  },
+  "servers": [
+    { "id": "cs2", "label": "满十竞技服", "host": "127.0.0.1", "port": 27015 }
+  ],
+  "apiBase": "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api",
+  "autoUpdate": { "enabled": true, "checkMinutes": 360 }
+}

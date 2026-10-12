@@ -1,0 +1,44 @@
+# ---- 真实配置(绝不入库,只提交 *.example.json) ----
+web/config.json
+**/config.local.json
+*.pem
+*.key
+*.creds.json
+*.pw
+
+# ---- 依赖 ----
+node_modules/
+.pnpm-store/
+
+# ---- .NET 构建产物 ----
+bin/
+obj/
+*.user
+
+# ---- 运行日志 ----
+*.log
+web/_run.log
+
+# ---- 上游数据与素材缓存(可由插件/Web 自动下载重建) ----
+reference/
+web/data/
+web/state/
+web/public/img/
+plugin/data/
+plugin/state/
+
+# ---- 部署临时文件(下划线开头,含本机真实配置与凭据) ----
+deploy/_*
+deploy/*.tgz
+
+# ---- 第三方二进制与第三方插件(他人项目产物与 NuGet 依赖,不入库) ----
+deploy/**/*.dll
+deploy/**/*.deps.json
+deploy/addons/counterstrikesharp/plugins/CS2MenuManager_MenuManager/
+
+# ---- 编辑器/系统 ----
+.vs/
+.idea/
+.vscode/
+Thumbs.db
+desktop.ini
