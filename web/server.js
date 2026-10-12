@@ -1,6 +1,6 @@
 "use strict";
 /* ============================================================
- * Howl 换肤 Web 端 —— 与 Howl 插件配套(zscsgo.com/skins 同款布局)
+ * Howl 换肤 Web 端 —— 与 Howl 插件配套(换肤面板 + 账号体系 + 服务器状态)
  *   · 数据源:CSGO-API 原始文件(data/zh-CN、data/en),catalog.js 归一化
  *   · 外观读写:howl_selection 表(行协议与插件一致,含 CT/T/any 三层)
  *   · 自动更新:内置定时检查 CSGO-API → 数据热重载 → 图片增量下载
@@ -349,8 +349,8 @@ app.delete("/api/loadout/:steam/:scope", auth, ah(async (req, res) => {
 }));
 
 
-/* ---------- 背包(多套配置方案,参考站"我的背包"):方案存 rows 快照,设使用中=原子覆盖 howl_selection ---------- */
-const MAX_PLANS = 3;   // 参考站会员上限
+/* ---------- 背包(多套配置方案):方案存 rows 快照,设使用中=原子覆盖 howl_selection ---------- */
+const MAX_PLANS = 3;   // 背包套数上限
 app.get("/api/plans/:steam", auth, ah(async (req, res) => {
   const sid = await guardSteam(req, res); if (!sid) return;
   // 使用中的背包与当前生效外观拉齐(selection 为准:游戏内菜单改动也会体现在背包里)
@@ -403,7 +403,7 @@ app.post("/api/plans/:steam/delete", auth, ah(async (req, res) => {
   await POOL.query("DELETE FROM howl_plan WHERE id=? AND steam_id=?", [+req.body.id || 0, sid]);
   res.json({ ok: true });
 }));
-/* 清空背包内容(参考站"清空背包") */
+/* 清空背包内容 */
 app.post("/api/plans/:steam/clear", auth, ah(async (req, res) => {
   const sid = await guardSteam(req, res); if (!sid) return;
   await POOL.query("UPDATE howl_plan SET rows_json='[]' WHERE id=? AND steam_id=?", [+req.body.id || 0, sid]);
@@ -440,7 +440,7 @@ app.post("/api/plans/:steam/save", auth, rate(30, 60000), ah(async (req, res) =>
   if (!r.affectedRows) return res.json({ ok: false, error: "not_found" });
   res.json({ ok: true, count: rows.length });
 }));
-/* 把当前使用中的外观同步回某背包(参考站无此按钮,但插件菜单改过外观后需要"存回背包"的通道) */
+/* 把当前使用中的外观同步回某背包(游戏内菜单改过外观后需要"存回背包"的通道) */
 app.post("/api/plans/:steam/sync", auth, rate(20, 60000), ah(async (req, res) => {
   const sid = await guardSteam(req, res); if (!sid) return;
   const [rs] = await POOL.query("SELECT side,sel_type,target,value FROM " + SKINS_DB + ".howl_selection WHERE steam_id=?", [sid]);
@@ -579,7 +579,7 @@ const MAP_ZH = {
   workshop_aim_map: "练枪图", aim_map: "练枪图", de_grail: "圣杯",
 };
 let SRV_CACHE = { at: 0, data: null, fileAt: 0 };
-/* ===== 24 小时在线人数采样(参考站「实时在线人数」模块)=====
+/* ===== 24 小时在线人数采样 =====
  * 每 60s A2S 轮询所有服务器,写入小时桶(存最近快照),持久化 data/stats.json。 */
 const STATS_FILE = path.join(__dirname, "data", "stats.json");
 let STATS = { hours: {} };

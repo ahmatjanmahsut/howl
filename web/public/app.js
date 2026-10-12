@@ -1,6 +1,6 @@
 "use strict";
 /* ============================================================
- * Howl 外观工坊前端 —— 复刻 zscsgo.com/skins 的信息架构:
+ * Howl 外观工坊前端 —— 换肤面板信息架构:
  *   武器平铺卡网格(双队/TR/CT 自动拆分合并) → 居中大弹层
  *   (左 360 竖排子标签 + 内联属性块,右滑出翼钻取选择)
  *   自动保存(乐观更新 + 防抖写库,游戏内秒级生效);数据版本轮询热更新。
@@ -18,7 +18,7 @@ const RAR_ORDER = ["common", "uncommon", "rare", "mythical", "legendary", "ancie
 const CATLABEL = { rifles: "步枪", snipers: "狙击步枪", pistols: "手枪", smgs: "微型冲锋枪", heavy: "重型武器", knife: "匕首", glove: "手套" };
 
 let ME = null, CAT = null, KEYCH = [];
-/* 参考站 lucide 图标同款线条(内联 SVG) */
+/* lucide 风格图标线条(内联 SVG) */
 const ICONS = {
   swords: '<path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6 3 3-6 6z"/><path d="M16 16l4-4"/><path d="M19 13l-3-3"/>',
   palette: '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2a10 10 0 000 20c1.1 0 2-.9 2-2v-1c0-1.1.9-2 2-2h1a4 4 0 004-4 10 10 0 00-9-9z"/>',
@@ -444,7 +444,7 @@ function openBagMenu(id, anchor) {
   };
   $$("[data-mi]", box).forEach(b => b.onclick = () => act(b.dataset.mi));
 }
-/* ---------- 顶栏公告条(参考站 amber 通知):数据版本与同步状态 ---------- */
+/* ---------- 顶栏公告条(amber 提示):数据版本与同步状态 ---------- */
 function renderNotice() {
   const el = $("#notice"); const txt = $("#noticeTxt"); const pop = $("#noticePop");
   if (!el || !txt || !pop) return;
@@ -657,7 +657,7 @@ function mergeItem(it) {
   renderGrid();
 }
 
-/* ---------- 详情弹层:左 360 子标签 + 内联属性块,右滑出翼(参考站结构) ---------- */
+/* ---------- 详情弹层:左 360 子标签 + 内联属性块,右滑出翼 ---------- */
 function tabHTML(x) {
   const E = S.edit;
   return '<div class="mtab' + (E.wing && E.wing.view === x[0] ? " on" : "") + '" data-tab="' + x[0] + '">' + svg(x[1]) + '<b class="lb">' + x[2] + '</b><span class="hint2">' + esc(x[3]) + "</span></div>";
@@ -1017,7 +1017,7 @@ function wingKeychain(w, it, layer, E) {
   imgWire(body);
 }
 /* ---------- 手套型号:通过皮肤行携带(model:paint);加一个型号切换弹层 ---------- */
-/* ---------- 探员 / 音乐盒:双列弹层(左列表右预览,参考站同款) ---------- */
+/* ---------- 探员 / 音乐盒:双列弹层(左列表右预览) ---------- */
 function openSimpleModal(kind) {
   const side = kind === "ct" || kind === "t" ? kind : null;
   const list = side ? CAT.agents.filter(a2 => a2.team === "both" || a2.team === side) : CAT.music;
@@ -1163,7 +1163,7 @@ function fallbackCopy(txt, okMsg) {
     else toast("请手动复制:" + txt);
   } catch { toast("请手动复制:" + txt); }
 }
-/* ===== 服务器卡片(参考 zscsgo.com/room 同款:全幅地图背景 + 悬浮信息层 + 网格/列表)===== */
+/* ===== 服务器卡片(全幅地图背景 + 悬浮信息层 + 网格/列表)===== */
 let SRV_DATA = [];
 let SRV_Q = "";
 let SRV_VIEW = localStorage.getItem("howl_srv_view") || "";

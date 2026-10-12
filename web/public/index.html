@@ -26,7 +26,7 @@ button.mini{padding:4px 9px;font-size:12px;border-radius:9px}
 input,select{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:9px 11px;outline:none;transition:.15s}
 input:focus,select:focus{border-color:rgba(77,138,255,.6);box-shadow:0 0 0 3px rgba(77,138,255,.14)}
 .hidden{display:none!important}
-/* ===== 顶栏(参考站 sticky 75px + 玻璃 + 底部渐变线) ===== */
+/* ===== 顶栏(sticky 75px + 玻璃 + 底部渐变线) ===== */
 header{position:sticky;top:0;z-index:50;height:75px;display:flex;align-items:center;gap:12px;padding:0 18px;
 background:rgba(18,20,32,.78);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid transparent;
 }
@@ -93,7 +93,7 @@ section{margin-top:18px}
 .sumcard .im img{max-width:100%;max-height:82px;object-fit:contain}
 .sumcard .lb{font-size:11px;color:rgba(255,255,255,.45);margin-top:6px}
 .sumcard .nm{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* ===== 武器平铺网格(参考站 2→7 列) ===== */
+/* ===== 武器平铺网格(2→7 列响应式) ===== */
 .itemgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:560px){.itemgrid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:768px){.itemgrid{grid-template-columns:repeat(4,1fr)}}
@@ -133,7 +133,7 @@ background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01));t
 .searchwrap input{width:100%;padding-left:32px}
 .savestate{font-size:12px;color:var(--dim2);margin-left:auto}
 .savestate.dirty{color:var(--gold)}
-/* ===== 弹层(参考站:居中 + 左 360 + 右滑出翼) ===== */
+/* ===== 弹层(居中 + 左 360 + 右滑出翼) ===== */
 .ovl{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:12px}
 .ovl .mask{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
 .modal{position:relative;display:flex;flex-direction:column;max-height:92vh;width:min(96vw,780px);overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.12);background:#111318;box-shadow:0 30px 70px rgba(0,0,0,.6);animation:pop .18s ease-out}
@@ -223,7 +223,7 @@ footer{position:fixed;left:0;right:0;bottom:0;z-index:18;padding:8px 16px;backgr
 .empty{color:rgba(255,255,255,.5);padding:44px 0;text-align:center}
 .custom-scrollbar::-webkit-scrollbar{width:6px;height:6px}
 .custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:9999px}
-/* ===== 参考站对齐补丁(1:1) ===== */
+/* ===== 布局对齐补丁 ===== */
 /* 顶栏公告条(amber + megaphone) */
 .notice{display:flex;align-items:center;gap:7px;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.1);color:#fde68a;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;max-width:38vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .notice svg{width:14px;height:14px;flex:none}
@@ -265,7 +265,7 @@ footer{position:fixed;left:0;right:0;bottom:0;z-index:18;padding:8px 16px;backgr
 .popmenu hr{border:0;border-top:1px solid rgba(255,255,255,.08);margin:5px 6px}
 /* 子标签图标 & 属性块位置 */
 .mtab .ic{width:17px;height:17px;flex:none}
-/* 右翼滑动(参考站 motion width 展开) */
+/* 右翼滑动(width 过渡展开) */
 .mwing{width:0;border-left:0;overflow:hidden;transition:width .22s ease}
 .modal.winging .mwing{width:min(460px,calc(100vw - 40px));border-left:1px solid rgba(255,255,255,.08)}
 @media(max-width:767px){.modal.winging{flex-direction:column}.modal.winging .mwing{width:100%;max-height:70vh;border-left:0;border-top:1px solid rgba(255,255,255,.08)}}
@@ -292,7 +292,7 @@ footer{position:fixed;left:0;right:0;bottom:0;z-index:18;padding:8px 16px;backgr
 /* 顶栏移动端收纳 */
 @media(max-width:720px){nav{margin-left:0}.notice{display:none}.brand b+.span,header .brand span{display:none}}
 
-/* ===== 服务器卡片(参考 zscsgo.com/room) ===== */
+/* ===== 服务器卡片 ===== */
 .srvbar .srvbar-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .srvtitle .tip{font-size:11px;font-weight:800;letter-spacing:.1em;color:#9ec2ff;text-transform:uppercase}
 .srvtools{display:flex;gap:8px;align-items:center}

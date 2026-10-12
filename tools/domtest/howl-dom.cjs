@@ -128,7 +128,7 @@ const S2 = D2 + D2 + "(";
     q1("#bagBack").click(); await wait(700);
     assert(!/🎒/.test((q1("#edChrome") || {}).textContent || ""), "返回后恢复普通编辑器");
   }
-  // ===== 服务器卡(参考站同款) =====
+  // ===== 服务器卡 =====
     window.location.hash = "#/servers"; window.dispatchEvent(new window.Event("hashchange")); await wait(500);
     assert(!!q1("#srvbar") && q2(".srvcard").length >= 1, "独立页面 #/servers 渲染服务器卡");
     assert(/服务器/.test((q1('#nav a[data-v="servers"]') || {}).textContent || ""), "导航含「服务器」入口");

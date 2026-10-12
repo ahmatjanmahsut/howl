@@ -3,7 +3,7 @@
 > 插件 + 网页面板一体化交付。**数据源 = CSGO-API(ByMykel/CSGO-API)原始格式**;游戏内按
 > **AstraSkins 的实现方式(行式外观档案 + 经济属性注入)**换肤,并内置我们自研的
 > **AstraBind 实时切换引擎**(轮询指纹 + 实体重建 + 最后写入者策略,秒级生效、换边不丢);
-> Web 端按 **zscsgo.com/skins 一比一**复刻(平铺武器卡网格、双队/TR/CT 自动拆分合并、
+> Web 端采用成熟的换肤面板信息架构(平铺武器卡网格、双队/TR/CT 自动拆分合并、
 > 居中大弹层 + 右滑翼、自动保存),**CT 与 T 方所有武器分开选择,皮肤可跨武器混搭**;
 > **CSGO-API 更新时插件自动更新,Web 端数据与图片同步更新**;游戏内菜单**全中文**。
 
@@ -28,7 +28,7 @@ howl/
 ├── web/                    Node.js 面板(Express;数据/图片自动同步内置)
 │   ├── server.js           后端(目录/外观/账号/管理/A2S 服务器状态/自动同步)
 │   ├── catalog.js          CSGO-API → Web 目录归一化(与插件同口径)
-│   ├── public/index.html   前端(zscsgo 同款布局与配色)
+│   ├── public/index.html   前端(紧凑卡片网格布局与配色)
 │   ├── public/app.js       前端逻辑(弹层/翼/拆合/自动保存)
 │   ├── config.example.json / Dockerfile / package.json
 ├── db/schema.sql           表结构(插件与 Web 各自幂等建表)
@@ -53,7 +53,7 @@ howl/
   side ∈ ct / t / any(**any=双队共享层,ct/t 行覆盖 any**)——这是"CT/T 分开选择"的底层模型。
 - 注入写法与 AstraSkins 同源:`set item texture prefab/seed/wear` 双属性表写入、
   bodygroup(legacy/StatTrak)、贴纸槽、挂件槽、EconGloves、MusicKitID、探员 SetModel。
-- 实时生效(AstraBind v6 同款策略,Howl 是唯一写入者,无第三方竞争):
+- 实时生效(沿用 AstraBind v6 的策略,Howl 是唯一写入者,无第三方竞争):
   3 秒轮询 count+MAX(updated_at) 指纹 → 变化即读行 → **Kill+Give 重建武器实体** →
   `OnEntitySpawned + NextWorldUpdate` 最后上漆 → 0.7s 二次补漆;
   `EventPlayerSpawn/EventPlayerTeam`(Post)0.9/1.9s 两轮从数据库重读 `RepaintOnly` —— 换边/重生不丢外观。
@@ -69,7 +69,7 @@ howl/
 howl_update(控制台)  立即检查 CSGO-API 更新;howl_status 查看目录版本与数量
 ```
 
-### 4. Web 端:zscsgo.com/skins 一比一(30 项结构断言,jsdom 回归 0 错误)
+### 4. Web 端(30 项结构断言,jsdom 回归 0 错误)
 - **平铺武器卡网格**(手套在前,2→7 列响应式):每件武器按 CT/T 两边配置指纹自动呈现
   **1 张"⛓双队"卡**(相同)或 **CT/T 两张卡**(不同);悬停可**拆分队伍/合并队伍**(合并带覆盖确认)。
 - **居中大弹层**:左 360 竖排子标签(刀型/皮肤/印花/挂件)+ 内联属性块(磨损·模板·名称·暗金,
@@ -78,12 +78,12 @@ howl_update(控制台)  立即检查 CSGO-API 更新;howl_status 查看目录版
 - **印花**:5 槽 + 磨损/缩放/角度/坐标数值(序列化 `sticker-def|wear|scale|rot|x|y`,
   插件注入引擎按值写属性,未调过的保持引擎默认)+ 复制所有槽位 + 年份/类型分面搜索。
 - **探员(TR/CT 分开)与音乐盒**在"当前配置"右侧三宫格摘要,点开即选。
-- **自动保存**:乐观更新 + 0.8s 防抖写库(参考站无保存按钮同款体验),页脚显示"已保存 · 游戏内约 3 秒生效"。
+- **自动保存**:乐观更新 + 0.8s 防抖写库(无保存按钮,改完即存),页脚显示"已保存 · 游戏内约 3 秒生效"。
 - **我的背包**:多套配置卡(编号水印 01/02/03、九宫格预览、"使用中"角标、悬停滑出"设为使用中"、⋮ 菜单:重命名/同步/清空/删除,上限 3 套;设使用中=事务覆盖 howl_selection,游戏内约 3 秒跟随)。
-- **贴纸可视化画布**:已贴印花渲染为可拖拽元素,位置与数值行 X/Y 双向换算(参考站同款交互;缩放/角度/磨损数值行齐备)。
-- **探员/音乐盒弹层**:左列表右大预览双列结构(hover 预览、点选即用),对应参考站 It/Lt 布局。
-- 顶栏中央 **amber 公告条**(数据版本/两侧同步状态,点击展开详情)、子标签 lucide 风格图标、翼宽度过渡动画与独立关闭钮、卡片磨损短码(FN/MW/FT/WW/BS 官方五色)、模板 Seed 上限 8192、75px 玻璃顶栏——均对齐参考站源码字面量。
-- 服务器状态卡(A2S)/三级用户权限(与 astra-web 同款防坑规则)/绑定码流全部保留。
+- **贴纸可视化画布**:已贴印花渲染为可拖拽元素,位置与数值行 X/Y 双向换算(可直接拖动;缩放/角度/磨损数值行齐备)。
+- **探员/音乐盒弹层**:左列表右大预览双列结构(hover 预览、点选即用)。
+- 顶栏中央 **amber 公告条**(数据版本/两侧同步状态,点击展开详情)、子标签 lucide 风格图标、翼宽度过渡动画与独立关闭钮、卡片磨损短码(FN/MW/FT/WW/BS 官方五色)、模板 Seed 上限 8192、75px 玻璃顶栏。
+- 服务器状态卡(A2S)/三级用户权限(沿用 astra-web 的权限防坑规则)/绑定码流全部保留。
 
 ### 5. 数据与图片自动更新
 - **插件**:内置 Updater,周期(默认 6h)HEAD 检查 CSGO-API ETag/Last-Modified →
@@ -114,5 +114,5 @@ MIT,见 [LICENSE](LICENSE)(Copyright 2026 ahmatjanmahsut)。
 - 皮肤 / 贴纸 / 挂件 / 探员 / 音乐盒数据来自 [CSGO-API](https://github.com/ByMykel/CSGO-API)(MIT 代码,数据版权归 Valve 所有)。
   本项目**不在仓库内分发**这些数据与图片,插件与 Web 端均在运行时从上游自动下载。
 - 依赖 NuGet 包 `CounterStrikeSharp.API`(MIT)、`CS2MenuManager`(MIT)、`MySqlConnector`(MIT)。
-- 换肤属性写入方式参考了 AstraSkins(MIT)的设计思路;面板交互参考 zscsgo.com 的公开界面,未复制其源码。
+- 换肤属性写入方式参考了 AstraSkins(MIT)的设计思路;面板前端为自行实现。
 

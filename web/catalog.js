@@ -3,7 +3,7 @@
  * 归一化规则与插件端 Catalog.cs 完全一致:
  *   · 刀的 sfui_wpnhud_* / weapon_* 双份条目按 def_index 归一;
  *   · 过滤宙斯/道具/裸刀/无皮肤手套;音乐盒按 def 去重(StatTrak™ 合并);
- *   · 中英名分别取自 en/zh;图片文件名约定 = <实体>-<paint>.png 等(与本地素材库/参考站兼容)。 */
+ *   · 中英名分别取自 en/zh;图片文件名约定 = <实体>-<paint>.png 等(与本地素材库兼容)。 */
 const fs = require("fs"), path = require("path"), crypto = require("crypto");
 
 const SKIP = new Set(["weapon_taser", "weapon_healthshot", "t_gloves", "ct_gloves", "weapon_knife", "weapon_knife_t", "weapon_c4"]);

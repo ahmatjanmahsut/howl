@@ -98,7 +98,7 @@ public sealed class HowlCatalog
     public string Fingerprint = "";
     public DateTime LoadedAt = DateTime.Now;
 
-    /// <summary>狙击枪按实体细分(参考站同款分法)。</summary>
+    /// <summary>狙击枪按实体细分(AWP / SSG08 / SCAR-20 / G3SG1)。</summary>
     public static readonly HashSet<string> Snipers = new(StringComparer.OrdinalIgnoreCase)
         { "weapon_awp", "weapon_ssg08", "weapon_scar20", "weapon_g3sg1" };
 

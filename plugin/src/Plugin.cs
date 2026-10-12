@@ -230,7 +230,7 @@ public sealed class HowlPlugin : BasePlugin, IPluginConfig<HowlConfig>
     // ---------- 落库 + 即时生效(菜单/命令统一入口) ----------
     private string SideFor(CCSPlayerController p, string type)
     {
-        // 参考站同款:刀型/刀兜底皮肤/手套/探员/音乐盒 = 全局(any);CT/T 只分皮肤/贴纸/磨损/挂件等
+        // 分层规则:刀型/刀兜底皮肤/手套/探员/音乐盒 = 全局(any);CT/T 只分皮肤/贴纸/磨损/挂件等
         if (type is "agent" or "music_kit" or "knife_type" or "glove") return "any";
         if (type == "knife" && _menu.CurrentEnt(p) == "knife") return "any";   // 菜单兜底行=全局
         return Config.TeamSpecificLoadouts ? _menu.CurrentSide(p) : "any";

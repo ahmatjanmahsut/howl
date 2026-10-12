@@ -154,7 +154,7 @@ public sealed class HowlInjector
         }
         if (e.KeychainId > 0)
             foreach (var h in new[] { h1, h2 })
-                _setAttr!.Invoke(h, "keychain slot 0 id", F(e.KeychainId));   // AstraSkins 同款:挂件只写 id
+                _setAttr!.Invoke(h, "keychain slot 0 id", F(e.KeychainId));   // 与 AstraSkins 一致:挂件只写 id
     }
 
     /// <summary>手套:写 pawn.EconGloves + lastinv 刷新 + 第一/三人称 bodygroup 翻转。</summary>
