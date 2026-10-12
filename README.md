@@ -105,3 +105,14 @@ howl_update(控制台)  立即检查 CSGO-API 更新;howl_status 查看目录版
 
 > ⚠️ **与 AstraSkins 不要同时启用**:两套系统写同一批武器实体属性,同时开会出现互相覆盖。
 > 迁移方案与共存注意事项见 `docs/DEPLOY.md`。
+
+## License
+
+MIT,见 [LICENSE](LICENSE)(Copyright 2026 ahmatjanmahsut)。
+
+**素材与第三方说明**
+- 皮肤 / 贴纸 / 挂件 / 探员 / 音乐盒数据来自 [CSGO-API](https://github.com/ByMykel/CSGO-API)(MIT 代码,数据版权归 Valve 所有)。
+  本项目**不在仓库内分发**这些数据与图片,插件与 Web 端均在运行时从上游自动下载。
+- 依赖 NuGet 包 `CounterStrikeSharp.API`(MIT)、`CS2MenuManager`(MIT)、`MySqlConnector`(MIT)。
+- 换肤属性写入方式参考了 AstraSkins(MIT)的设计思路;面板交互参考 zscsgo.com 的公开界面,未复制其源码。
+
