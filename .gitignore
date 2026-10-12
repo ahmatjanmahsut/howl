@@ -5,6 +5,13 @@ web/config.json
 *.key
 *.creds.json
 *.pw
+*.secret
+*.token
+.env
+.env.*
+id_rsa*
+*.p12
+*.pfx
 
 # ---- 依赖 ----
 node_modules/

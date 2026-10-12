@@ -106,6 +106,34 @@ howl_update(控制台)  立即检查 CSGO-API 更新;howl_status 查看目录版
 > ⚠️ **与 AstraSkins 不要同时启用**:两套系统写同一批武器实体属性,同时开会出现互相覆盖。
 > 迁移方案与共存注意事项见 `docs/DEPLOY.md`。
 
+## 仓库内容说明
+
+本仓库只放**源码与示例配置**;以下内容**故意不入库**,克隆后自行生成或使用你自己的:
+
+| 不入库内容 | 原因 | 如何获得 |
+|---|---|---|
+| `web/config.json`、`Howl.json` | 含数据库口令、会话密钥、管理员口令 | 复制对应的 `*.example.json` 后填写 |
+| `node_modules/`、`bin/`、`obj/` | 依赖与构建产物 | `pnpm i --frozen-lockfile` / `dotnet build -c Release` |
+| `web/data/`、`plugin/data/`、`web/public/img/` | CSGO-API 目录与全部图标(约 850MB,版权归 Valve) | 首次启动自动下载 |
+| `deploy/**/*.dll` | 第三方二进制(CounterStrikeSharp.API / CS2MenuManager / MySqlConnector) | 由 NuGet 还原并构建 |
+| `reference/` | 第三方参考源码 | 自行获取 |
+
+### 从源码构建
+
+```bash
+# 插件(net10.0,需 .NET 10 SDK)
+cd plugin && dotnet build -c Release
+# 产物 bin/Release/net10.0/Howl.dll,连同 gamedata/ 与 configs/ 投放至 CSS
+
+# 网页端(Node 20+)
+cd web && pnpm i && cp config.example.json config.json && node server.js
+```
+
+### 安全
+
+- 仓库内**不含**任何真实凭据;数据库口令、会话密钥、管理员口令一律走 `config.json`(已 gitignore)。
+- `.gitignore` 已覆盖 `config.json`、`*.pw`、`.env`、`deploy/_*` 等易误提交项;提交前脚本建议自查一遍。
+
 ## License
 
 MIT,见 [LICENSE](LICENSE)(Copyright 2026 ahmatjanmahsut)。
